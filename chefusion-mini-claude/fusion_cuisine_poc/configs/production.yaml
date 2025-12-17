@@ -1,0 +1,115 @@
+# Production Configuration
+# High-quality training for deployment-ready models
+# Ideal for: Final models, production deployment, best results
+
+# Dataset Configuration - Large scale
+dataset:
+  target_recipes_per_cuisine: 10000  # Large dataset
+  target_cuisines: ["japanese", "italian"]
+  min_ingredient_frequency: 15  # Higher quality filtering
+  image_size: 512  # High resolution
+  test_split_ratio: 0.1
+  validation_split_ratio: 0.1
+
+# Model Configuration - High capacity
+models:
+  # Encoder (SimCLR/CLIP-mini) - Production quality
+  encoder:
+    latent_dim: 512  # Large embedding space
+    batch_size: 32   # Stable batch size
+    epochs: 50       # Extensive training
+    learning_rate: 0.0005  # Conservative LR
+    temperature: 0.07  # Optimal temperature
+    projection_dim: 256  # Large projection
+    
+  # PalateNet (GraphSAGE + MLP) - Complex architecture
+  palatenet:
+    hidden_dim: 128  # Large model
+    num_layers: 3    # Deep network
+    batch_size: 64
+    epochs: 100      # Extensive training
+    learning_rate: 0.0005  # Conservative LR
+    dropout: 0.3     # Strong regularization
+    aggregation: "mean"
+    
+  # Generation Models
+  generation:
+    stable_diffusion_model: "stabilityai/stable-diffusion-xl-base-1.0"
+    openai_model: "gpt-4-turbo"
+    max_tokens: 1500  # Detailed recipes
+    temperature: 0.7  # Balanced creativity
+
+# Fusion Configuration - Comprehensive
+fusion:
+  alpha_values: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]  # Full range
+  num_samples_per_alpha: 20  # Many samples
+
+# Training Configuration - Stability focused
+training:
+  device: "auto"
+  mixed_precision: true
+  gradient_checkpointing: true
+  max_grad_norm: 0.5        # Tighter clipping
+  warmup_steps: 500         # Extensive warmup
+  save_steps: 250           # Frequent saves
+  eval_steps: 100           # Frequent evaluation
+
+# Evaluation Configuration - Comprehensive
+evaluation:
+  metrics:
+    - "ingredient_overlap"
+    - "spearman_correlation"
+    - "fid_score"
+  target_spearman_correlation: 0.4  # High quality bar
+  fid_batch_size: 32
+  num_fid_samples: 2000     # Extensive evaluation
+
+# Data Processing Configuration
+preprocessing:
+  text_max_length: 768      # Long text processing
+  tokenizer_model: "sentence-transformers/all-MiniLM-L6-v2"
+  image_transforms:
+    - "resize"
+    - "center_crop"
+    - "to_tensor"
+    - "normalize"
+  normalize_mean: [0.485, 0.456, 0.406]
+  normalize_std: [0.229, 0.224, 0.225]
+
+# Environment Configuration
+environment:
+  offline_mode: false
+  use_gpu: true
+  num_workers: 8            # Maximum parallelism
+  pin_memory: true
+  random_seed: 42
+  log_level: "INFO"
+
+# File Paths
+paths:
+  data_dir: "app/data"
+  models_dir: "app/models"
+  outputs_dir: "outputs"
+  notebooks_dir: "app/notebooks"
+  scripts_dir: "scripts"
+  tests_dir: "tests"
+
+# API Configuration
+api:
+  openai_api_key: null
+  huggingface_token: null
+  unsplash_access_key: null
+
+# Resource Limits - High capacity
+resources:
+  max_memory_gb: 16         # High memory usage
+  max_disk_gb: 20           # Large storage
+  cleanup_intermediate_files: false  # Keep for analysis
+  max_file_size_mb: 1000
+
+# Logging Configuration
+logging:
+  level: "DEBUG"            # Detailed logging
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "fusion_cuisine_production.log"
+  console: true

@@ -1,0 +1,114 @@
+# Central Configuration for Fusion Cuisine POC
+# All hyperparameters and settings for the multicultural fusion cuisine generator
+
+# Dataset Configuration
+dataset:
+  target_recipes_per_cuisine: 5000
+  target_cuisines: ["japanese", "italian"]
+  min_ingredient_frequency: 10
+  image_size: 256
+  test_split_ratio: 0.1
+  validation_split_ratio: 0.1
+
+# Model Configuration
+models:
+  # Encoder (SimCLR/CLIP-mini)
+  encoder:
+    latent_dim: 256
+    batch_size: 32
+    epochs: 10
+    learning_rate: 0.001
+    temperature: 0.1
+    projection_dim: 128
+    
+  # PalateNet (GraphSAGE + MLP)
+  palatenet:
+    hidden_dim: 64
+    num_layers: 2
+    batch_size: 64
+    epochs: 20
+    learning_rate: 0.001
+    dropout: 0.2
+    aggregation: "mean"
+    
+  # Generation Models
+  generation:
+    stable_diffusion_model: "stabilityai/stable-diffusion-xl-base-1.0"
+    openai_model: "gpt-4-turbo"
+    max_tokens: 1000
+    temperature: 0.7
+
+# Fusion Configuration
+fusion:
+  alpha_values: [0.3, 0.5, 0.7]
+  num_samples_per_alpha: 10
+
+# Training Configuration
+training:
+  device: "auto"  # auto, cpu, cuda, mps
+  mixed_precision: false
+  gradient_checkpointing: true
+  max_grad_norm: 1.0
+  warmup_steps: 100
+  save_steps: 500
+  eval_steps: 250
+
+# Evaluation Configuration
+evaluation:
+  metrics:
+    - "ingredient_overlap"
+    - "spearman_correlation"
+    - "fid_score"
+  target_spearman_correlation: 0.3
+  fid_batch_size: 32
+  num_fid_samples: 1000
+
+# Data Processing Configuration
+preprocessing:
+  text_max_length: 512
+  tokenizer_model: "sentence-transformers/all-MiniLM-L6-v2"
+  image_transforms:
+    - "resize"
+    - "center_crop"
+    - "to_tensor"
+    - "normalize"
+  normalize_mean: [0.485, 0.456, 0.406]
+  normalize_std: [0.229, 0.224, 0.225]
+
+# Environment Configuration
+environment:
+  offline_mode: false  # Set to true to use dummy data/images
+  use_gpu: true
+  num_workers: 4
+  pin_memory: true
+  random_seed: 42
+  log_level: "INFO"
+
+# File Paths (relative to project root)
+paths:
+  data_dir: "app/data"
+  models_dir: "app/models"
+  outputs_dir: "outputs"
+  notebooks_dir: "app/notebooks"
+  scripts_dir: "scripts"
+  tests_dir: "tests"
+  
+# API Configuration
+api:
+  openai_api_key: null  # Set via environment variable OPENAI_API_KEY
+  huggingface_token: null  # Set via environment variable HF_TOKEN
+  unsplash_access_key: null  # Set via environment variable UNSPLASH_ACCESS_KEY
+
+# Resource Limits
+resources:
+  max_memory_gb: 8
+  max_disk_gb: 10
+  cleanup_intermediate_files: true
+  max_file_size_mb: 500
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "fusion_cuisine.log"
+  console: true

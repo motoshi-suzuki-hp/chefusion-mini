@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: fusion-cuisine-poc
+    ports:
+      - "8888:8888"  # JupyterLab port
+    volumes:
+      - ./app:/workspace/app
+      - ./scripts:/workspace/scripts
+      - ./outputs:/workspace/outputs
+      - ./notebooks:/workspace/app/notebooks  # Persistent notebook storage
+      - ./config.yaml:/workspace/config.yaml
+      - ./Makefile:/workspace/Makefile
+    environment:
+      - PYTHONPATH=/workspace
+      - DATA_DIR=/workspace/app/data
+      - MODEL_DIR=/workspace/app/models
+      - OUTPUT_DIR=/workspace/outputs
+      - NOTEBOOKS_DIR=/workspace/app/notebooks
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - HF_TOKEN=${HF_TOKEN:-}
+      - UNSPLASH_ACCESS_KEY=${UNSPLASH_ACCESS_KEY:-}
+      - CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-}
+      - OFFLINE_MODE=${OFFLINE_MODE:-0}
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    mem_limit: 8g
+    shm_size: 2g
+    command: bash -c "make setup && jupyter lab --ip=0.0.0.0 --port=8888 --allow-root --no-browser"
+    
+  # Alternative service for running the full pipeline without JupyterLab
+  pipeline:
+    build: .
+    container_name: fusion-cuisine-pipeline
+    volumes:
+      - ./app:/workspace/app
+      - ./scripts:/workspace/scripts
+      - ./outputs:/workspace/outputs
+      - ./notebooks:/workspace/app/notebooks
+      - ./config.yaml:/workspace/config.yaml
+      - ./Makefile:/workspace/Makefile
+    environment:
+      - PYTHONPATH=/workspace
+      - DATA_DIR=/workspace/app/data
+      - MODEL_DIR=/workspace/app/models
+      - OUTPUT_DIR=/workspace/outputs
+      - NOTEBOOKS_DIR=/workspace/app/notebooks
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - HF_TOKEN=${HF_TOKEN:-}
+      - UNSPLASH_ACCESS_KEY=${UNSPLASH_ACCESS_KEY:-}
+      - CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-}
+      - OFFLINE_MODE=${OFFLINE_MODE:-1}
+    working_dir: /workspace
+    mem_limit: 8g
+    shm_size: 2g
+    profiles:
+      - pipeline  # This service is only started when explicitly requested

@@ -1,0 +1,114 @@
+# Quick Prototype Configuration
+# Fast development and testing with minimal resource usage
+# Ideal for: Initial development, bug testing, proof of concept
+
+# Dataset Configuration - Small for speed
+dataset:
+  target_recipes_per_cuisine: 1000  # Small dataset
+  target_cuisines: ["japanese", "italian"]
+  min_ingredient_frequency: 5  # Lower threshold for more ingredients
+  image_size: 128  # Smaller images
+  test_split_ratio: 0.15  # Larger test set for validation
+  validation_split_ratio: 0.15
+
+# Model Configuration - Minimal capacity
+models:
+  # Encoder (SimCLR/CLIP-mini) - Fast training
+  encoder:
+    latent_dim: 128  # Smaller embedding space
+    batch_size: 64   # Larger batches for speed
+    epochs: 5        # Quick training
+    learning_rate: 0.005  # Higher LR for faster convergence
+    temperature: 0.1
+    projection_dim: 64  # Smaller projection
+    
+  # PalateNet (GraphSAGE + MLP) - Simple architecture
+  palatenet:
+    hidden_dim: 32   # Small model
+    num_layers: 1    # Single layer
+    batch_size: 128  # Large batches
+    epochs: 10       # Quick training
+    learning_rate: 0.005  # Higher LR
+    dropout: 0.1     # Less regularization
+    aggregation: "mean"
+    
+  # Generation Models
+  generation:
+    stable_diffusion_model: "stabilityai/stable-diffusion-xl-base-1.0"
+    openai_model: "gpt-4-turbo"
+    max_tokens: 500  # Shorter recipes
+    temperature: 0.8  # More creative
+
+# Fusion Configuration - Basic testing
+fusion:
+  alpha_values: [0.3, 0.7]  # Just two extremes
+  num_samples_per_alpha: 3  # Few samples
+
+# Training Configuration - Speed optimized
+training:
+  device: "auto"
+  mixed_precision: true      # Memory and speed boost
+  gradient_checkpointing: false  # Disable for speed
+  max_grad_norm: 1.0
+  warmup_steps: 50          # Fewer warmup steps
+  save_steps: 1000          # Less frequent saves
+  eval_steps: 500           # Less frequent evaluation
+
+# Evaluation Configuration
+evaluation:
+  metrics:
+    - "ingredient_overlap"
+    - "spearman_correlation"
+  target_spearman_correlation: 0.2  # Lower bar for prototype
+  fid_batch_size: 64
+  num_fid_samples: 500      # Fewer samples
+
+# Data Processing Configuration
+preprocessing:
+  text_max_length: 256      # Shorter text
+  tokenizer_model: "sentence-transformers/all-MiniLM-L6-v2"
+  image_transforms:
+    - "resize"
+    - "center_crop"
+    - "to_tensor"
+    - "normalize"
+  normalize_mean: [0.485, 0.456, 0.406]
+  normalize_std: [0.229, 0.224, 0.225]
+
+# Environment Configuration
+environment:
+  offline_mode: false
+  use_gpu: true
+  num_workers: 2            # Fewer workers for stability
+  pin_memory: false         # Disable for lower memory
+  random_seed: 42
+  log_level: "INFO"
+
+# File Paths
+paths:
+  data_dir: "app/data"
+  models_dir: "app/models"
+  outputs_dir: "outputs"
+  notebooks_dir: "app/notebooks"
+  scripts_dir: "scripts"
+  tests_dir: "tests"
+
+# API Configuration
+api:
+  openai_api_key: null
+  huggingface_token: null
+  unsplash_access_key: null
+
+# Resource Limits - Conservative
+resources:
+  max_memory_gb: 4          # Lower memory usage
+  max_disk_gb: 5            # Less storage
+  cleanup_intermediate_files: true
+  max_file_size_mb: 200
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "fusion_cuisine_prototype.log"
+  console: true

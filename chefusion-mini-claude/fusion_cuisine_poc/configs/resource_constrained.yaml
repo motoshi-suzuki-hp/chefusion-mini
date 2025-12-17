@@ -1,0 +1,127 @@
+# Resource Constrained Configuration
+# Optimized for limited hardware (4GB RAM, slow CPU, no GPU)
+# Ideal for: Laptops, budget systems, CPU-only environments
+
+# Dataset Configuration - Minimal
+dataset:
+  target_recipes_per_cuisine: 500   # Very small dataset
+  target_cuisines: ["japanese", "italian"]
+  min_ingredient_frequency: 3   # Include rare ingredients for diversity
+  image_size: 64  # Very small images
+  test_split_ratio: 0.2  # Larger splits for validation
+  validation_split_ratio: 0.2
+
+# Model Configuration - Tiny models
+models:
+  # Encoder (SimCLR/CLIP-mini) - Minimal
+  encoder:
+    latent_dim: 64   # Very small embedding
+    batch_size: 8    # Very small batches
+    epochs: 3        # Minimal training
+    learning_rate: 0.01  # High LR for quick convergence
+    temperature: 0.2
+    projection_dim: 32  # Tiny projection
+    
+  # PalateNet (GraphSAGE + MLP) - Minimal
+  palatenet:
+    hidden_dim: 16   # Tiny model
+    num_layers: 1    # Single layer only
+    batch_size: 16   # Small batches
+    epochs: 5        # Minimal training
+    learning_rate: 0.01
+    dropout: 0.0     # No regularization
+    aggregation: "mean"
+    
+  # Generation Models
+  generation:
+    stable_diffusion_model: "stabilityai/stable-diffusion-xl-base-1.0"
+    openai_model: "gpt-3.5-turbo"  # Cheaper model
+    max_tokens: 200  # Very short recipes
+    temperature: 0.9  # High creativity to compensate
+
+# Fusion Configuration - Minimal testing
+fusion:
+  alpha_values: [0.5]  # Single value only
+  num_samples_per_alpha: 1  # Single sample
+
+# Training Configuration - Memory optimized
+training:
+  device: "cpu"              # Force CPU usage
+  mixed_precision: false     # Disable for CPU
+  gradient_checkpointing: true  # Save memory
+  max_grad_norm: 2.0         # Looser clipping
+  warmup_steps: 10           # Minimal warmup
+  save_steps: 10000          # Rare saves
+  eval_steps: 1000           # Rare evaluation
+
+# Evaluation Configuration - Minimal
+evaluation:
+  metrics:
+    - "ingredient_overlap"   # Skip expensive metrics
+  target_spearman_correlation: 0.1  # Very low bar
+  fid_batch_size: 8
+  num_fid_samples: 50      # Minimal samples
+
+# Data Processing Configuration
+preprocessing:
+  text_max_length: 128     # Very short text
+  tokenizer_model: "sentence-transformers/all-MiniLM-L6-v2"
+  image_transforms:
+    - "resize"
+    - "center_crop"
+    - "to_tensor"
+    # Skip normalization to save computation
+  normalize_mean: [0.5, 0.5, 0.5]  # Simple normalization
+  normalize_std: [0.5, 0.5, 0.5]
+
+# Environment Configuration
+environment:
+  offline_mode: true         # Avoid API calls
+  use_gpu: false             # Force CPU
+  num_workers: 1             # Single worker only
+  pin_memory: false          # Disable for CPU
+  random_seed: 42
+  log_level: "WARNING"       # Minimal logging
+
+# File Paths
+paths:
+  data_dir: "app/data"
+  models_dir: "app/models"
+  outputs_dir: "outputs"
+  notebooks_dir: "app/notebooks"
+  scripts_dir: "scripts"
+  tests_dir: "tests"
+
+# API Configuration
+api:
+  openai_api_key: null
+  huggingface_token: null
+  unsplash_access_key: null
+
+# Resource Limits - Very conservative
+resources:
+  max_memory_gb: 2           # Very low memory
+  max_disk_gb: 2             # Minimal storage
+  cleanup_intermediate_files: true
+  max_file_size_mb: 50       # Small files only
+
+# Logging Configuration
+logging:
+  level: "WARNING"           # Minimal logging
+  format: "%(levelname)s - %(message)s"  # Simple format
+  file: null                 # No file logging
+  console: true
+
+# CPU Optimization Settings
+cpu_optimization:
+  use_mkl: false             # Disable Intel MKL
+  num_threads: 1             # Single thread
+  optimize_for_inference: true
+  reduce_memory_usage: true
+  
+# Simplified Processing
+simplified:
+  skip_image_processing: true    # Skip image encoding
+  use_text_only: true           # Text-only fusion
+  cache_embeddings: true        # Cache to avoid recomputation
+  use_precomputed_features: true

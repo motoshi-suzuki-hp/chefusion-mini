@@ -1,0 +1,18 @@
+{
+  "n_recipes": 10000,
+  "n_train": 8000,
+  "n_val": 1000,
+  "n_test": 1000,
+  "n_ingredients": 84,
+  "n_cuisines": 2,
+  "text_embedding_dim": 384,
+  "ingredient_embedding_dim": 384,
+  "graph_nodes": 84,
+  "graph_edges": 3446,
+  "cuisines": [
+    "italian",
+    "japanese"
+  ],
+  "config_file": "/workspace/config.yaml",
+  "random_seed": 42
+}

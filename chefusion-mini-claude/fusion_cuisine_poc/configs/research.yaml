@@ -1,0 +1,145 @@
+# Research Configuration
+# Extensive experimentation and hyperparameter exploration
+# Ideal for: Academic research, model development, ablation studies
+
+# Dataset Configuration - Comprehensive
+dataset:
+  target_recipes_per_cuisine: 15000  # Very large dataset
+  target_cuisines: ["japanese", "italian", "french", "chinese"]  # Multiple cuisines
+  min_ingredient_frequency: 8  # Balanced vocabulary
+  image_size: 384  # High quality images
+  test_split_ratio: 0.15  # Larger test set for robust evaluation
+  validation_split_ratio: 0.15
+
+# Model Configuration - Experimental
+models:
+  # Encoder (SimCLR/CLIP-mini) - Research scale
+  encoder:
+    latent_dim: 768  # Very large embedding space
+    batch_size: 24   # Memory-conscious for large models
+    epochs: 100      # Extensive training
+    learning_rate: 0.0003  # Lower LR for stability
+    temperature: 0.05  # Aggressive contrastive learning
+    projection_dim: 512  # Large projection space
+    
+  # PalateNet (GraphSAGE + MLP) - Deep architecture
+  palatenet:
+    hidden_dim: 256  # Large capacity
+    num_layers: 4    # Very deep network
+    batch_size: 48
+    epochs: 150      # Very extensive training
+    learning_rate: 0.0003
+    dropout: 0.4     # Heavy regularization
+    aggregation: "max"  # Alternative aggregation
+    
+  # Generation Models
+  generation:
+    stable_diffusion_model: "stabilityai/stable-diffusion-xl-base-1.0"
+    openai_model: "gpt-4-turbo"
+    max_tokens: 2000  # Very detailed recipes
+    temperature: 0.6  # Conservative creativity
+
+# Fusion Configuration - Extensive exploration
+fusion:
+  alpha_values: [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]  # Fine-grained
+  num_samples_per_alpha: 50  # Extensive sampling
+
+# Training Configuration - Research optimized
+training:
+  device: "auto"
+  mixed_precision: true
+  gradient_checkpointing: true
+  max_grad_norm: 0.3        # Very tight clipping
+  warmup_steps: 1000        # Extensive warmup
+  save_steps: 100           # Very frequent saves
+  eval_steps: 50            # Very frequent evaluation
+
+# Evaluation Configuration - Comprehensive metrics
+evaluation:
+  metrics:
+    - "ingredient_overlap"
+    - "spearman_correlation"
+    - "fid_score"
+    - "diversity_score"
+    - "novelty_score"
+  target_spearman_correlation: 0.5  # Very high quality bar
+  fid_batch_size: 16        # Memory-conscious
+  num_fid_samples: 5000     # Extensive evaluation
+
+# Data Processing Configuration
+preprocessing:
+  text_max_length: 1024     # Very long text processing
+  tokenizer_model: "sentence-transformers/all-MiniLM-L6-v2"
+  image_transforms:
+    - "resize"
+    - "random_horizontal_flip"  # Data augmentation
+    - "color_jitter"           # Additional augmentation
+    - "center_crop"
+    - "to_tensor"
+    - "normalize"
+  normalize_mean: [0.485, 0.456, 0.406]
+  normalize_std: [0.229, 0.224, 0.225]
+
+# Environment Configuration
+environment:
+  offline_mode: false
+  use_gpu: true
+  num_workers: 12           # Maximum parallelism
+  pin_memory: true
+  random_seed: 42
+  log_level: "DEBUG"
+
+# File Paths
+paths:
+  data_dir: "app/data"
+  models_dir: "app/models"
+  outputs_dir: "outputs"
+  notebooks_dir: "app/notebooks"
+  scripts_dir: "scripts"
+  tests_dir: "tests"
+
+# API Configuration
+api:
+  openai_api_key: null
+  huggingface_token: null
+  unsplash_access_key: null
+
+# Resource Limits - High-end system
+resources:
+  max_memory_gb: 32         # Very high memory
+  max_disk_gb: 50           # Large storage for experiments
+  cleanup_intermediate_files: false  # Keep all data
+  max_file_size_mb: 2000
+
+# Logging Configuration
+logging:
+  level: "DEBUG"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s"
+  file: "fusion_cuisine_research.log"
+  console: true
+
+# Experimental Features (Research-specific)
+experimental:
+  # Learning rate scheduling
+  use_cosine_annealing: true
+  cosine_annealing_min_lr: 0.00001
+  
+  # Advanced regularization
+  use_label_smoothing: true
+  label_smoothing_factor: 0.1
+  
+  # Model ensembling
+  train_multiple_models: true
+  num_ensemble_models: 5
+  
+  # Advanced fusion techniques
+  use_attention_fusion: true
+  use_vae_fusion: false
+  
+  # Data augmentation
+  use_mixup: true
+  mixup_alpha: 0.2
+  
+  # Curriculum learning
+  use_curriculum: true
+  curriculum_start_ratio: 0.3

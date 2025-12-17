@@ -1,0 +1,72 @@
+# Fusion Cuisine Project Results Configuration
+# This file defines how to access and display project results
+
+project:
+  name: "Fusion Cuisine Generator"
+  version: "1.0.0"
+  status: "partial_complete"
+  last_run: "2025-07-06"
+
+# Data locations
+data_paths:
+  recipes: "app/data/recipes.csv"
+  ratings: "app/data/ratings.csv"
+  flavor_graph: "app/data/flavor_graph.json"
+  data_summary: "app/data/data_summary.json"
+  text_embeddings: "app/data/text_embeddings.npy"
+  ingredient_embeddings: "app/data/ingredient_embeddings.npy"
+  train_split: "app/data/train.csv"
+  validation_split: "app/data/val.csv"
+  test_split: "app/data/test.csv"
+
+# Model locations
+model_paths:
+  encoder_best: "app/models/encoder_best.pt"
+  encoder_final: "app/models/encoder_final.pt"
+  palatenet_best: "app/models/palatenet_best.pt"
+  palatenet_final: "app/models/palatenet_final.pt"
+
+# Output locations
+output_paths:
+  evaluation_metrics: "outputs/evaluation_metrics.json"
+  fusion_recipes: "outputs/recipes/fusion_recipes.json"
+  fusion_embeddings: "outputs/fusion_embeddings.json"
+  generated_images: "outputs/images/"
+  reports: "outputs/reports/"
+
+# Results display configuration
+display:
+  recipes_per_page: 10
+  max_recipe_length: 500
+  show_ingredients: true
+  show_instructions: true
+  show_ratings: true
+  show_cuisine_type: true
+
+# Analysis settings
+analysis:
+  sample_recipes_per_cuisine: 5
+  top_ingredients_count: 20
+  rating_bins: 20
+  correlation_threshold: 0.3
+
+# Export settings
+export:
+  formats: ["json", "csv", "html"]
+  include_embeddings: false
+  include_raw_data: true
+  compress_output: true
+
+# Visualization settings
+visualization:
+  chart_theme: "plotly"
+  color_palette: ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7"]
+  figure_size: [12, 8]
+  dpi: 300
+
+# Performance tracking
+performance:
+  track_timing: true
+  track_memory: true
+  track_errors: true
+  log_level: "INFO"
